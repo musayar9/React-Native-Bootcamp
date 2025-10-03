@@ -1,4 +1,5 @@
 import { createHomeStyles } from "@/assets/styles/home.styles";
+import EmptyState from "@/components/EmptyState";
 import Header from "@/components/Header";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import TodoInput from "@/components/TodoInput";
@@ -10,6 +11,7 @@ import { useMutation, useQuery } from "convex/react";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import {
+  Alert,
   FlatList,
   StatusBar,
   Text,
@@ -25,6 +27,8 @@ const Index = () => {
   const styles = createHomeStyles(colors);
   const todos = useQuery(api.todos.getTodos);
   const toggleTodo = useMutation(api.todos.toggleTodo);
+  const clearAll = useMutation(api.todos.clearAllTodos);
+  const deleteTodo = useMutation(api.todos.deleteTodo);
 
   const isLoading = todos === undefined;
   if (isLoading) return <LoadingSpinner />;
@@ -36,6 +40,17 @@ const Index = () => {
       console.log("Error toggling todo", error);
       Alert.alert("Error", "Failed to toggle todo.");
     }
+  };
+
+  const handleDeleteTodo = async (id: Id<"todos">) => {
+    Alert.alert("Delete Todo", "Are you sure you want to delete this todo?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => deleteTodo({ id }),
+      },
+    ]);
   };
 
   const renderTodoItem = ({ item }: { item: Todo }) => {
@@ -83,6 +98,30 @@ const Index = () => {
             >
               {item.text}
             </Text>
+
+            <View style={styles.todoActions}>
+              <TouchableOpacity onPress={() => {}} activeOpacity={0.8}>
+                <LinearGradient
+                  colors={colors.gradients.warning}
+                  style={styles.actionButton}
+                >
+                  <Ionicons name="pencil" size={14} color={"#fff"} />
+                </LinearGradient>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  handleDeleteTodo(item?._id);
+                }}
+                activeOpacity={0.8}
+              >
+                <LinearGradient
+                  colors={colors.gradients.danger}
+                  style={styles.actionButton}
+                >
+                  <Ionicons name="trash" size={14} color={"#fff"} />
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
           </View>
         </LinearGradient>
       </View>
@@ -106,10 +145,18 @@ const Index = () => {
           style={styles.todoList}
           contentContainerStyle={styles.todoListContent}
           showsVerticalScrollIndicator={false}
+          ListEmptyComponent={<EmptyState />}
         />
 
         <TouchableOpacity onPress={toggleDarkMode}>
           <Text> Toggle the mode</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            clearAll();
+          }}
+        >
+          <Text> Clear all tabs the mode</Text>
         </TouchableOpacity>
       </SafeAreaView>
     </LinearGradient>
