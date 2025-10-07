@@ -15,10 +15,9 @@ const Header = () => {
     ? todos.filter((todo) => todo.isCompleted).length
     : 0;
     const totalCount = todos ? todos.length : 0;
-//   const totalCount = 10;
+
   const percentage = totalCount > 0 ? (completedTodos / totalCount) * 100 : 0;
 
-  console.log(todos);
   return (
     <View style={homeStyles.header}>
       <View style={homeStyles.titleContainer}>

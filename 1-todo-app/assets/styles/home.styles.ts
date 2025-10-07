@@ -181,7 +181,7 @@ export const createHomeStyles = (colors: ColorScheme) => {
     editInput: {
       borderWidth: 2,
       borderRadius: 16,
-      paddingHorizontal: 16,
+      paddingHorizontal: 18,
       paddingVertical: 12,
       fontSize: 17,
       fontWeight: "500",
